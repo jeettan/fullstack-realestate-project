@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+.main {
+  max-width: 1400px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.strike {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.strike > h3 {
+  position: relative;
+  display: inline-block;
+}
+
+.strike > h3:before,
+.strike > h3:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 0.6px;
+  background: white;
+}
+
+.strike > h3:before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.strike > h3:after {
+  left: 100%;
+  margin-left: 15px;
+}
