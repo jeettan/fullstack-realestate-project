@@ -28,10 +28,12 @@ Before you begin, ensure you have the following:
 ## 3. Vercel Deployment Steps
 
 1.  **Push to GitHub:** Ensure your latest code is pushed to your repository.
+    *   *Note:* If you are working on a branch (e.g., `vercel-deploy`), push that branch: `git push origin vercel-deploy`.
 2.  **Import Project in Vercel:**
     *   Go to your Vercel Dashboard.
     *   Click **"Add New..."** -> **"Project"**.
     *   Select your GitHub repository and click **Import**.
+    *   *Important:* If you haven't merged your branch to `main` yet, Vercel might try to deploy the old `main` branch first. You can change the **Production Branch** in Vercel settings later, or simply merge your code to `main` before importing.
 
 3.  **Configure Project:**
     *   **Framework Preset:** Vercel should automatically detect **Vite**.
