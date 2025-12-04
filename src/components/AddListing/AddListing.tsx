@@ -10,7 +10,6 @@ export default function AddListing() {
   const [address, setAddress] = useState("");
   const [latlng, setlatlng] = useState<[number, number]>([0, 0]);
   const [fileUpload, setFileUpload] = useState<React.ReactElement[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setisLoading] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -128,12 +127,6 @@ export default function AddListing() {
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!e.target.files) return;
-    const files = e.target.files[0];
-    setSelectedFile(files);
   };
 
   return (
@@ -328,7 +321,6 @@ export default function AddListing() {
             <input
               type="file"
               className="file:bg-gray-200 file:text-black file:rounded file:px-2 file:py-1"
-              onChange={handleFileSelected}
               name="fileSingle"
               required
             />

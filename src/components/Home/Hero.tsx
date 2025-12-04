@@ -8,7 +8,7 @@ export default function Hero() {
 
   const navigate = useNavigate();
 
-  const changeInput = (e) => {
+  const changeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
 

@@ -15,7 +15,6 @@ var path = require("path");
 const { features } = require('process');
 require("dotenv").config();
 
-
 let nanoid;
 
 (async () => {
@@ -510,7 +509,6 @@ app.post('/api/add-properties', verifyToken, upload.any(), async (req, res) => {
         const url = response.url
 
         let folder_id = nanoid(20)
-
         await prisma.properties.update({
 
             where: {
@@ -534,10 +532,11 @@ app.post('/api/add-properties', verifyToken, upload.any(), async (req, res) => {
 
         const bulkFolderPath = path.join(os.tmpdir(), 'bulk');
 
+        await fs.mkdir(bulkFolderPath, { recursive: true })
+
         const files = await fs.readdir(bulkFolderPath);
 
         const create_new_folder = await cloudinary.api.create_folder(`${folder_id}`);
-        console.log(create_new_folder)
 
         const imageFiles = files.filter(file => {
             const ext = path.extname(file).toLowerCase();
