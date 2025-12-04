@@ -8,20 +8,33 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const multer = require('multer')
 const fs = require('fs').promises
+const fsStandard = require('fs');
+const os = require('os');
 var uuid = require("uuid");
 var path = require("path");
-const { nanoid } = require('nanoid');
 const { features } = require('process');
+require("dotenv").config();
+
+
+let nanoid;
+
+(async () => {
+    const mod = await import('nanoid');
+    nanoid = mod.nanoid;
+})();
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        const tempDir = os.tmpdir();
+        const bulkDir = path.join(tempDir, 'bulk');
 
         if (file.fieldname === "fileBulk") {
-            cb(null, 'temp/bulk/');
+            if (!fsStandard.existsSync(bulkDir)) {
+                fsStandard.mkdirSync(bulkDir, { recursive: true });
+            }
+            cb(null, bulkDir);
         } else {
-
-            cb(null, 'temp/')
-
+            cb(null, tempDir)
         }
     },
     filename: function (req, file, cb) {
@@ -46,12 +59,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-app.get('/', (req, res) => {
+app.get('/api/', (req, res) => {
     res.send('Hello World');
 });
 
 
-app.get('/get-featured', async (req, res) => {
+app.get('/api/get-featured', async (req, res) => {
 
     cloudinary.api.resources_by_asset_folder('featured_images', {
         type: 'upload',
@@ -68,7 +81,7 @@ app.get('/get-featured', async (req, res) => {
 
 })
 
-app.get('/recommended_properties', async (req, res) => {
+app.get('/api/recommended_properties', async (req, res) => {
 
     cloudinary.api.resources_by_asset_folder('recommended_properties', {
         type: 'upload',
@@ -85,7 +98,7 @@ app.get('/recommended_properties', async (req, res) => {
 
 })
 
-app.get('/grab-rental-properties', async (req, res) => {
+app.get('/api/grab-rental-properties', async (req, res) => {
 
     let query = req.query.query || ''
 
@@ -129,7 +142,7 @@ app.get('/grab-rental-properties', async (req, res) => {
     return res.json(props)
 })
 
-app.get('/grab-rental-images', async (req, res) => {
+app.get('/api/grab-rental-images', async (req, res) => {
 
     const folder_id = req.query.id;
 
@@ -178,7 +191,7 @@ const verifyToken = async function (req, res, next) {
 
 }
 
-app.post('/grab-rental-properties-with-property-id', async (req, res) => {
+app.post('/api/grab-rental-properties-with-property-id', async (req, res) => {
 
     let id = req.body.id
 
@@ -200,7 +213,7 @@ app.post('/grab-rental-properties-with-property-id', async (req, res) => {
 
 })
 
-app.post('/grab-rental-properties-with-id', verifyToken, async (req, res) => {
+app.post('/api/grab-rental-properties-with-id', verifyToken, async (req, res) => {
 
     let id = req.user.id
 
@@ -225,7 +238,7 @@ app.post('/grab-rental-properties-with-id', verifyToken, async (req, res) => {
 
 })
 
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
 
     const users = await prisma.users.findFirst({
 
@@ -270,7 +283,7 @@ app.post('/register', async (req, res) => {
 
 })
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
 
     const userFind = await prisma.users.findUnique({
 
@@ -300,12 +313,12 @@ app.post('/login', async (req, res) => {
 })
 
 
-app.post('/verify-token', verifyToken, async (req, res) => {
+app.post('/api/verify-token', verifyToken, async (req, res) => {
 
     res.send({ message: `Hello ${req.user.first_name}, you are verified`, token: req.user })
 });
 
-app.post('/get-user-details', verifyToken, async (req, res) => {
+app.post('/api/get-user-details', verifyToken, async (req, res) => {
 
     let id = parseInt(req.user.id)
 
@@ -328,7 +341,7 @@ app.post('/get-user-details', verifyToken, async (req, res) => {
 })
 
 
-app.post('/get-lat-long', async (req, res) => {
+app.post('/api/get-lat-long', async (req, res) => {
 
     let api_key_geo = process.env.GEO_API;
 
@@ -369,7 +382,7 @@ async function getLatLng(address_name) {
 
 }
 
-app.patch('/change-password', verifyToken, async (req, res) => {
+app.patch('/api/change-password', verifyToken, async (req, res) => {
 
     let userFound = await prisma.users.findUnique({
 
@@ -410,7 +423,7 @@ app.patch('/change-password', verifyToken, async (req, res) => {
 
 })
 
-app.patch('/update-user-details', verifyToken, async (req, res) => {
+app.patch('/api/update-user-details', verifyToken, async (req, res) => {
 
     let id = req.user.id
 
@@ -440,7 +453,7 @@ app.patch('/update-user-details', verifyToken, async (req, res) => {
 
 })
 
-app.post('/add-properties', verifyToken, upload.any(), async (req, res) => {
+app.post('/api/add-properties', verifyToken, upload.any(), async (req, res) => {
 
     try {
 
@@ -511,7 +524,7 @@ app.post('/add-properties', verifyToken, upload.any(), async (req, res) => {
             }
         })
 
-        const deleteFile = path.join(__dirname, `${pathOfSingleFile}`);
+        const deleteFile = pathOfSingleFile;
 
         await fs.unlink(deleteFile);
 
@@ -519,7 +532,7 @@ app.post('/add-properties', verifyToken, upload.any(), async (req, res) => {
 
         console.log("Uploading additional photos to Cloudinary..")
 
-        const bulkFolderPath = path.join(__dirname, '/temp/bulk');
+        const bulkFolderPath = path.join(os.tmpdir(), 'bulk');
 
         const files = await fs.readdir(bulkFolderPath);
 
@@ -533,7 +546,7 @@ app.post('/add-properties', verifyToken, upload.any(), async (req, res) => {
 
 
         for (const image of imageFiles) {
-            await cloudinary.uploader.upload(`temp/bulk/${image}`, {
+            await cloudinary.uploader.upload(path.join(bulkFolderPath, image), {
                 folder: folder_id
             });
         }
@@ -557,7 +570,7 @@ app.post('/add-properties', verifyToken, upload.any(), async (req, res) => {
 
 })
 
-app.patch('/edit-property', verifyToken, upload.any(), async (req, res) => {
+app.patch('/api/edit-property', verifyToken, upload.any(), async (req, res) => {
 
     const prop_id = req.body.id
 
@@ -707,7 +720,7 @@ app.patch('/edit-property', verifyToken, upload.any(), async (req, res) => {
                     }
                 })
 
-                const deleteFile = path.join(__dirname, `${pathOfSingleFile}`);
+                const deleteFile = pathOfSingleFile;
 
                 await fs.unlink(deleteFile);
 
@@ -715,7 +728,7 @@ app.patch('/edit-property', verifyToken, upload.any(), async (req, res) => {
 
             if (fileBulk != undefined) {
 
-                const bulkFolderPath = path.join(__dirname, '/temp/bulk');
+                const bulkFolderPath = path.join(os.tmpdir(), 'bulk');
 
                 const files = await fs.readdir(bulkFolderPath);
 
@@ -725,7 +738,7 @@ app.patch('/edit-property', verifyToken, upload.any(), async (req, res) => {
                 });
 
                 for (const image of imageFiles) {
-                    await cloudinary.uploader.upload(`temp/bulk/${image}`, {
+                    await cloudinary.uploader.upload(path.join(bulkFolderPath, image), {
                         folder: prisAddress.folder_id
                     });
                 }
@@ -746,7 +759,7 @@ app.patch('/edit-property', verifyToken, upload.any(), async (req, res) => {
     }
 })
 
-app.delete('/delete-property', verifyToken, async (req, res) => {
+app.delete('/api/delete-property', verifyToken, async (req, res) => {
 
     const prop_id = req.query.id
 
@@ -810,8 +823,10 @@ app.delete('/delete-property', verifyToken, async (req, res) => {
 
 })
 
-app.listen(process.env.PORT, () => {
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(process.env.PORT, () => {
+        console.log(`Express started on port ${process.env.PORT}`);
+    });
+}
 
-    console.log(`Express started on port ${process.env.PORT}`);
-
-});
+module.exports = app;
