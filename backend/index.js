@@ -12,8 +12,16 @@ const fsStandard = require('fs');
 const os = require('os');
 var uuid = require("uuid");
 var path = require("path");
-const { nanoid } = require('nanoid');
 const { features } = require('process');
+require("dotenv").config();
+
+
+let nanoid;
+
+(async () => {
+    const mod = await import('nanoid');
+    nanoid = mod.nanoid;
+})();
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {

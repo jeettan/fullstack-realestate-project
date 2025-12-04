@@ -8,7 +8,7 @@ datasource db {
 }
 
 model properties {
-  id                 Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  id                 Int       @id @default(autoincrement())
   title              String?   @db.VarChar(45)
   description        String?   @db.VarChar(400)
   price              Int?
@@ -33,7 +33,7 @@ model properties {
 }
 
 model users {
-  id         Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   username   String? @unique(map: "username_UNIQUE") @db.VarChar(45)
   password   String? @db.VarChar(100)
   first_name String? @db.VarChar(45)
