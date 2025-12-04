@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 function numberWithCommas(x: number) {
+  if (x === null || x === undefined) return "0";
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -29,6 +30,7 @@ export default function Props() {
         },
       })
       .then((response) => {
+        console.log(response.data);
         setProperties(response.data);
       });
   }, [query, type, order, dayAgo]);
