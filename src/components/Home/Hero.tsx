@@ -38,10 +38,10 @@ export default function Hero() {
         <h3 className="text-white text-3xl font-bold">
           Rent, Lease, or Sell Property within Minutes.
         </h3>
-        <div className="flex w-70 md:w-200 justify-center">
-          <form>
+        <form>
+          <div className="flex w-60 md:w-200 justify-center">
             <input
-              name="searchbar"
+              name="query"
               placeholder="Search for properties here"
               className="bg-white p-3 rounded-l-lg shadow-xs w-100"
               onChange={(e) => changeInput(e)}
@@ -60,8 +60,8 @@ export default function Hero() {
                 }}
               />
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );
