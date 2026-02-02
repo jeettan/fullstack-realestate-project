@@ -60,8 +60,8 @@ export default function Recommended() {
             <img
               key={i}
               src={recommendedProperties[i]}
-              className="w-55 h-64 object-cover m-3 rounded-lg cursor-pointer"
-            />
+              className="w-9 h-13 md:w-30 md:h-30 lg:w-55 lg:h-64 object-cover m-3 rounded-lg cursor-pointer"
+            />,
           );
         }
       }
@@ -80,18 +80,20 @@ export default function Recommended() {
   }, []);
 
   return (
-    <div className="pt-40">
-      <h2 className="text-4xl font-bold">Recommended Properties</h2>
+    <div className=" pl-0 mt-5 md:pt-10">
+      <h2 className="text-2xl md:text-4xl font-bold text-center pb-5">
+        Recommended Properties
+      </h2>
       <div className="flex flex-row justify-center items-center w-100%">
         <div
-          className="text-4xl cursor-pointer"
+          className="text-2xl md:text-4xl cursor-pointer"
           onClick={() => handleLeftClick()}
         >
           <ArrowBackIcon />
         </div>
         {imageSet}
         <div
-          className="text-4xl cursor-pointer"
+          className="text-2xl md:text-4xl cursor-pointer"
           onClick={() => handleRightClick()}
         >
           <ArrowForwardIcon />

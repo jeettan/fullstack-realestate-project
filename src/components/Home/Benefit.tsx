@@ -5,7 +5,7 @@ import EuroIcon from "@mui/icons-material/Euro";
 
 export default function Benefit() {
   return (
-    <div className="flex flex-row m-10 bg-gray-800">
+    <div className="flex flex-col md:flex-row m-10 bg-gray-800">
       <div className="flex-1">
         <img src={Left} />
       </div>

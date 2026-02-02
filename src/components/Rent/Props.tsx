@@ -51,13 +51,13 @@ export default function Props() {
     setDayAgo(e.currentTarget.value);
   };
   return (
-    <div>
+    <div className="px-10">
       <div>
         <h3>Filter</h3>
-        <div className="flex flex-row w-full gap-12 align-items-start justify-content-start">
+        <div className="flex flex-col md:flex-row w-full gap-12 align-start justify-start">
           <input
             type="text"
-            className="border border-solid px-2 py-1"
+            className="border border-solid px-2 py-2"
             placeholder="Search"
             value={query || ""}
             onChange={(e) => {

@@ -18,7 +18,7 @@ export default function Hero() {
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat p-12 text-center"
+      className="relative overflow-hidden bg-cover bg-no-repeat p-12 text-center"
       style={{ backgroundImage: `url(${House})`, height: "600px" }}
     >
       <div className="absolute inset-0 bg-black opacity-80 rounded-lg"></div>
@@ -38,27 +38,29 @@ export default function Hero() {
         <h3 className="text-white text-3xl font-bold">
           Rent, Lease, or Sell Property within Minutes.
         </h3>
-        <div className="flex">
-          <input
-            name="searchbar"
-            placeholder="Search for properties here"
-            className="bg-white p-3 rounded-lg shadow-xs w-100"
-            onChange={(e) => changeInput(e)}
-            value={query}
-          />
-          <button onClick={submitInformation}>
-            <SearchIcon
-              className="cursor-pointer rounded-lg"
-              sx={{
-                backgroundColor: "blue",
-                width: "45px",
-                height: "100%",
-                marginLeft: "-10%",
-                padding: "10px",
-                color: "white",
-              }}
+        <div className="flex w-70 md:w-200 justify-center">
+          <form>
+            <input
+              name="searchbar"
+              placeholder="Search for properties here"
+              className="bg-white p-3 rounded-l-lg shadow-xs w-100"
+              onChange={(e) => changeInput(e)}
+              value={query}
             />
-          </button>
+            <button onClick={submitInformation}>
+              <SearchIcon
+                className="cursor-pointer rounded-r-lg"
+                sx={{
+                  backgroundColor: "blue",
+                  width: "45px",
+                  height: "100%",
+                  marginLeft: "-10%",
+                  padding: "10px",
+                  color: "white",
+                }}
+              />
+            </button>
+          </form>
         </div>
       </div>
     </div>

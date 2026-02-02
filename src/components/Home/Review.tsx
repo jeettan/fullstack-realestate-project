@@ -6,7 +6,7 @@ export default function Review() {
   return (
     <div>
       <h2 className="text-4xl font-bold text-center">Google Reviews</h2>
-      <div className="flex flex-row items-start justify-center gap-10 m-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-10 m-6">
         <div className="bg-gray-50 w-75 p-5 rounded-md shadow-md">
           <div className="grid grid-cols-6">
             <Avatar>J</Avatar>

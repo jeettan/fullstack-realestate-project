@@ -124,6 +124,7 @@ app.get('/api/grab-rental-properties', async (req, res) => {
             title: {
 
                 contains: query,
+                mode: 'insensitive',
             },
 
             property_type: {

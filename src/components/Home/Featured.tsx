@@ -11,8 +11,8 @@ export default function Featured() {
 
   return (
     <div className="featured pt-10">
-      <h2 className="font-bold text-4xl">Featured Properties</h2>
-      <div className="grid grid-cols-3 h-96 ">
+      <h2 className="font-bold text-4xl pl-10 pb-3">Featured Properties</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3">
         <div className="col-span-1 h-full cursor-pointer group relative">
           <img src={featuredImages[0]} className="h-full w-full"></img>
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-75 transition-opacity">
