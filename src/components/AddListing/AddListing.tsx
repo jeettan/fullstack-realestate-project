@@ -35,8 +35,6 @@ export default function AddListing() {
     photos: File[] | null;
   }
 
-  /*
-
   const [formData, setFormData] = useState<PropertyFormData>({
     propName: "",
     description: "",
@@ -56,7 +54,9 @@ export default function AddListing() {
     featured_photo: null,
     photos: [],
   });
-  */
+
+  /*
+
 
   const [formData, setFormData] = useState<PropertyFormData>({
     propName: "Test Property",
@@ -77,6 +77,8 @@ export default function AddListing() {
     featured_photo: null,
     photos: [],
   });
+
+  */
 
   const handleFormChange = (
     e: React.ChangeEvent<
