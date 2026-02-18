@@ -198,40 +198,6 @@ The application uses **JWT (JSON Web Tokens)** for authentication:
 - Password changes
 - Update user details
 
-## 🚢 Deployment
-
-### Deploying to Vercel
-
-1. **Push to GitHub**
-
-   ```bash
-   git push origin main
-   ```
-
-2. **Import in Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Add New" → "Project"
-   - Select your GitHub repository
-   - Click "Import"
-
-3. **Configure Environment Variables**
-   In Vercel Dashboard → Settings → Environment Variables, add:
-   - `DATABASE_URL` (use cloud database like Neon, Supabase, or Railway)
-   - `CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-   - `JWT_SECRET`, `SALTVALUE`, `expires`
-   - `VITE_API_URL=/api` (important for production)
-   - `GEO_API` (optional)
-
-4. **Deploy**
-   - Vercel automatically builds and deploys on push to main
-
-### Important Notes for Vercel
-
-- Use a **cloud database** (local database won't work)
-- Set `VITE_API_URL=/api` for production
-- Cloudinary must be configured for image uploads
-- The `postinstall` script automatically generates Prisma client
-
 ## 🐛 Troubleshooting
 
 ### Database Connection Error
@@ -275,13 +241,3 @@ The application uses **JWT (JSON Web Tokens)** for authentication:
 ## 📄 License
 
 This project is licensed under the ISC License. See LICENSE file for details.
-
-## 👥 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
