@@ -1,7 +1,7 @@
 import Navbar from "../Reusable/Nav";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,7 +12,7 @@ export default function ResetPassword() {
   const [resetCompleted, setResetCompleted] = useState(false);
 
   let navigate = useNavigate();
-  const formRef = useRef(0);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     if (!searchParams.get("token")) navigate("/");
@@ -37,9 +37,11 @@ export default function ResetPassword() {
       });
   }, [searchParams]);
 
-  const resetPassword = (e) => {
+  const resetPassword = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const token = searchParams.get("token");
+
+    if (!formRef.current) return;
 
     if (formRef.current.pwd.value !== formRef.current.pwdagain.value) {
       toast.error("Passwords do not match, try again");
