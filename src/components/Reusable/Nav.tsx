@@ -51,12 +51,22 @@ export default function Navbar() {
             >
               Lease
             </li>
-            <li
-              className="py-2 hover:text-gray-400 cursor-pointer"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </li>
+
+            {login == false ? (
+              <li
+                className="py-2 hover:text-gray-400 cursor-pointer"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </li>
+            ) : (
+              <li
+                className="py-2 hover:text-gray-400 cursor-pointer"
+                onClick={() => navigate("/signout")}
+              >
+                Signout
+              </li>
+            )}
           </ul>
         </div>
         <div className="hidden w-full md:block md:w-auto">
