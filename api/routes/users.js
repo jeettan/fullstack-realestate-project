@@ -201,25 +201,25 @@ router.post('/forget-password', async (req, res) => {
         secure: false,
         auth: {
             user: `${process.env.EMAIL_USER}`,
-            pass: `${process.env.EMAIL_PASS }`,
+            pass: `${process.env.EMAIL_PASS}`,
         },
     });
 
     const token = jwt.sign({ email: req.body.email }, 'mygoodness', { expiresIn: '15m' });
 
-    const resetLink = `${ process.env.FRONTEND_URL } / reset - password ? token = ${ token }`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     const info = await transporter.sendMail({
         from: '"Jeet Tan" <jeetta3@gmail.com>',
         to: req.body.email,
         subject: "[PASSWORD RESET] Real Estate Homes Project",
-        text: `Hey ${ userFind.first_name }, \n \n Your username is: ${ userFind.username } \n \n Here's the link to reset your password: ${resetLink} \n\n Keep it simple. \n\n Best, \n \n -Real Estate Home Admin`, // plain text body
+        text: `Hey ${userFind.first_name}, \n \n Your username is: ${userFind.username} \n \n Here's the link to reset your password: ${resetLink} \n\n Keep it simple. \n\n Best, \n \n -Real Estate Home Admin`, // plain text body
         html: "",
     });
 
-console.log("Recovery details sent!")
+    console.log("Recovery details sent!")
 
-res.send("Email sent!")
+    res.send("Email sent!")
 })
 
 router.post('/verify-reset-token', verifyEmailToken, async (req, res, next) => {
