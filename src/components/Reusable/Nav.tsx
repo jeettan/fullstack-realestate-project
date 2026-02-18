@@ -17,7 +17,7 @@ export default function Navbar() {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src={logo} className="h-20 md:h-25" alt="Flowbite Logo" />
+          <img src={logo} className="h-15 md:h-25" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             Real Estate Homes
           </span>

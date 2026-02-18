@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Spinner from "../Reusable/Spinner";
 
 export default function EditListing() {
   const [firstRun, setFirstRun] = useState(false);
@@ -37,28 +38,6 @@ export default function EditListing() {
 
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const Spinner = () => (
-    <div role="status">
-      <svg
-        aria-hidden="true"
-        className="w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-        viewBox="0 0 100 101"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-          fill="currentColor"
-        />
-        <path
-          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-          fill="currentFill"
-        />
-      </svg>
-      <span className="sr-only">Loading...</span>
-    </div>
-  );
 
   const [properties, setProperties] = useState<PropertyInterface>({
     id: 0,
@@ -116,7 +95,7 @@ export default function EditListing() {
     }
 
     axios
-      .post("/get-lat-long", {
+      .post("/maps/lat-lng", {
         address: properties["address"],
       })
       .then((res) => {
@@ -185,7 +164,7 @@ export default function EditListing() {
 
     if (token) {
       axios
-        .post("/verify-token", {
+        .post("/users/verify-token", {
           token: token,
         })
         .then((res) => {
@@ -202,7 +181,7 @@ export default function EditListing() {
 
   useEffect(() => {
     axios
-      .post("grab-rental-properties-with-property-id", {
+      .post("/properties/rental-properties-with-property-id", {
         id: id,
       })
       .then((res) => {
@@ -216,7 +195,7 @@ export default function EditListing() {
   useEffect(() => {
     if (properties["folder_id"]) {
       axios
-        .get("/grab-rental-images", {
+        .get("/properties/rental-images", {
           params: {
             id: properties["folder_id"],
           },
@@ -243,31 +222,41 @@ export default function EditListing() {
     formData.append("id", id ?? "");
     formData.append("carousel", JSON.stringify(imageCarousel));
 
+    
+
     axios
-      .patch("/edit-property", formData, {
+      .patch("/properties/edit-property", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      })
+      .then(() => {})
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setisLoading(false);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          window.location.reload();
+        }, 1000);
       });
   };
 
   const deleteProperties = () => {
     if (window.confirm("Are you sure you want to delete this property?")) {
+      setisLoading(true);
+
       axios
-        .delete("/delete-property", {
+        .delete("/properties/delete-property", {
           params: { id: id },
         })
         .then(() => {
           console.log("Deleted property");
           navigate("/lease");
+        })
+        .finally(() => {
+          setisLoading(false);
         });
     } else {
       console.log("Deletion canceled");
@@ -279,7 +268,7 @@ export default function EditListing() {
       <Nav />
       <div className="bg-gray-100 min-h-screen p-3">
         <form onSubmit={editProperties}>
-          <div className="flex flex-col justify-center items-start bg-white w-1/2 mx-auto shadow-lg p-16 m-5">
+          <div className="flex flex-col justify-center items-center md:items-start bg-white w-1/2 mx-auto shadow-lg p-16 m-5 w-[100%] md:w-[60%]">
             <h2 className="font-bold text-4xl">Edit Property</h2>
             <h3 className="font-bold text-2xl mt-5">Main</h3>
             <label>Property Name</label>
@@ -509,7 +498,7 @@ export default function EditListing() {
                 setFeaturedImage(
                   file
                     ? URL.createObjectURL(file)
-                    : properties["featured_image_url"]
+                    : properties["featured_image_url"],
                 );
               }}
             />
@@ -525,7 +514,7 @@ export default function EditListing() {
                     type="button"
                     onClick={() => {
                       setImageCarousel((prev) =>
-                        prev.filter((_, i) => i !== index)
+                        prev.filter((_, i) => i !== index),
                       );
                     }}
                     className="absolute top-1 right-1 text-white rounded-full px-2 py-1 text-xs hover:bg-white hover:text-black"
@@ -553,7 +542,7 @@ export default function EditListing() {
                 if (fileLength) {
                   if (fileLength + imageCarousel.length > 6) {
                     setErrorMessage(
-                      "You've reached the file upload limit (6 files)"
+                      "You've reached the file upload limit (6 files)",
                     );
                     return;
                   }
@@ -563,7 +552,7 @@ export default function EditListing() {
 
                 if (files) {
                   const newImages = Array.from(files).map((file) =>
-                    URL.createObjectURL(file)
+                    URL.createObjectURL(file),
                   );
                   setImageCarousel((prev) => [...prev, ...newImages]);
                 }
@@ -611,7 +600,10 @@ export default function EditListing() {
               </button>
 
               <Link to="/lease">
-                <button className="text-white py-3 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 text-center mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                <button
+                  className="text-white py-3 bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 text-center mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  disabled={isLoading}
+                >
                   Cancel
                 </button>
               </Link>
@@ -620,8 +612,9 @@ export default function EditListing() {
                 onClick={deleteProperties}
                 type="button"
                 className="text-white py-3 bg-purple-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 text-center mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                disabled={isLoading}
               >
-                Delete
+                {isLoading ? <Spinner /> : "Delete"}
               </button>
             </div>
           </div>

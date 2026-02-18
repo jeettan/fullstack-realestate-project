@@ -74,7 +74,7 @@ export default function Recommended() {
   }, [recommendedProperties]);
 
   useEffect(() => {
-    axios.get(`/recommended_properties`).then((response) => {
+    axios.get(`/frontpage/recommended_properties`).then((response) => {
       setRecommendedProperties(response.data);
     });
   }, []);

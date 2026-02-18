@@ -4,9 +4,14 @@ import axios from "../../axios";
 export default function Featured() {
   const [featuredImages, setFeaturedImages] = useState([]);
   useEffect(() => {
-    axios.get(`/get-featured`).then((response) => {
-      setFeaturedImages(response.data);
-    });
+    axios
+      .get(`/frontpage/featured`)
+      .then((response) => {
+        setFeaturedImages(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (

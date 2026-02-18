@@ -17,7 +17,11 @@ export default function Dashboard() {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 600,
+    width: {
+      xs: "90%",
+      sm: "70%",
+      md: "50%",
+    },
     bgcolor: "background.paper",
     border: "2px solid #000",
     boxShadow: 24,
@@ -86,7 +90,7 @@ export default function Dashboard() {
 
     if (token) {
       axios
-        .post("/verify-token", {
+        .post("/users/verify-token", {
           token: token,
         })
         .then((res) => {
@@ -110,7 +114,7 @@ export default function Dashboard() {
 
   const getAndSetFields = (userId: Number) => {
     axios
-      .post("/get-user-details", {
+      .post("/users/user-details", {
         token: localStorage.getItem("token"),
       })
       .then((res) => {
@@ -146,7 +150,7 @@ export default function Dashboard() {
     }
 
     axios
-      .patch("/update-user-details", {
+      .patch("/users/update-user-details", {
         id: userInfo.id,
         first_name: firstName,
         last_name: lastName,
@@ -174,7 +178,7 @@ export default function Dashboard() {
 
     if (newpwd === newpwdagain) {
       axios
-        .patch("/change-password", {
+        .patch("/users/change-password", {
           username: userInfo.username,
           password: pwd,
           newpwd: newpwd,
@@ -207,7 +211,7 @@ export default function Dashboard() {
               type="password"
               id="pwd"
               name="pwd"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="Current Password"
               required
             ></input>
@@ -218,7 +222,7 @@ export default function Dashboard() {
               type="password"
               id="newpwd"
               name="newpwd"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="New password"
               minLength={6}
               required
@@ -230,7 +234,7 @@ export default function Dashboard() {
               type="password"
               id="newpwdagain"
               name="newpwdagain"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="Confirm Password"
               minLength={6}
               required
@@ -264,12 +268,12 @@ export default function Dashboard() {
   const changeDetailBlock = (
     <>
       <div className="flex flex-col gap-3">
-        <div className="grid grid grid-cols-2">
+        <div className="grid grid grid-cols-1 md:grid-cols-2">
           <div className="space-y-2 flex flex-col">
             <label>First Name</label>
             <input
               type="text"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="First Name"
               value={firstName}
               pattern="[A-Za-z ]*"
@@ -278,7 +282,7 @@ export default function Dashboard() {
             <label>Username</label>
             <input
               type="text"
-              className=" border border-solid py-1 px-2 w-60 bg-gray-200"
+              className=" border border-solid py-1 px-2 w-[70%] bg-gray-200"
               placeholder="Username"
               value={username}
               readOnly
@@ -288,7 +292,7 @@ export default function Dashboard() {
             <label>Last Name</label>
             <input
               type="text"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="Last Name"
               value={lastName}
               pattern="[A-Za-z ]*"
@@ -297,7 +301,7 @@ export default function Dashboard() {
             <label>Email Address</label>
             <input
               type="text"
-              className=" border border-solid py-1 px-2 w-60"
+              className=" border border-solid py-1 px-2 w-[70%]"
               placeholder="Email"
               value={email}
               onChange={handleEmail}
@@ -340,53 +344,49 @@ export default function Dashboard() {
   return (
     <div className="main">
       <Nav />
-      <div>
+      <div className="w-full">
         <h1 className="font-bold text-center m-5">
           Welcome to the Admin Dashboard, {name}
         </h1>
-        <div className="flex flex-row justify-center align-center gap-30 m-20">
-          <div className="text-center">
+        <div className="flex flex-row sm:justify-between items-center align-center h-70 text-center gap-10 sm:gap-5 mx-5 my-10 sm:m-20">
+          <div className="flex flex-col justify-center items-center text-center gap-2 w-full sm:w-1/3">
             <img
-              width={110}
               src="https://cdn-icons-png.flaticon.com/512/84/84380.png"
               onClick={handleOpen}
-              className="cursor-pointer"
-            ></img>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Edit Profile
-                </Typography>
-                {tabs == 0 ? changeDetailBlock : changePwdBlock}
-              </Box>
-            </Modal>
-
-            <label className="text-[25px]">Edit profile</label>
+              className="cursor-pointer w-18 md:w-28"
+            />
+            <p className="text-[20px] md:text-[25px]">Edit profile</p>
           </div>
-          <div className="text-center">
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Edit Profile
+              </Typography>
+              {tabs == 0 ? changeDetailBlock : changePwdBlock}
+            </Box>
+          </Modal>
+          <div className="flex flex-col justify-center items-center text-center gap-2 w-full sm:w-1/3">
             <Link to="/add-listing">
               <img
-                width={110}
-                className="ml-6"
+                className="w-16 md:w-28"
                 src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png"
               ></img>
             </Link>
-            <label className="text-[25px]">Add properties</label>
+            <p className="text-[20px] md:text-[25px]">Add properties</p>
           </div>
-          <div className="text-center">
+          <div className="flex flex-col justify-center items-center text-center gap-2 w-full sm:w-1/3">
             <Link to="/lease">
               <img
-                width={110}
-                className="ml-7"
+                className="w-16 md:w-28"
                 src="https://cdn-icons-png.flaticon.com/512/709/709586.png"
               ></img>
             </Link>
-            <label className="text-[25px]">View properties</label>
+            <p className="text-[20px] md:text-[25px]">View properties</p>
           </div>
         </div>
       </div>

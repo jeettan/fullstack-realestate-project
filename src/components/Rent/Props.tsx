@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "../../axios";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import SpinneRed from "../Reusable/SpinnerRed";
 
 function numberWithCommas(x: number) {
   if (x === null || x === undefined) return "0";
@@ -13,6 +14,7 @@ export default function Props() {
   const [type, setType] = useState("");
   const [order, setOrder] = useState("");
   const [dayAgo, setDayAgo] = useState("");
+  const [loading, setIsLoading] = useState(false);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -20,8 +22,10 @@ export default function Props() {
   const [query, setQuery] = useState<string>(params.get("query") || "");
 
   useEffect(() => {
+    setIsLoading(true);
+
     axios
-      .get("/grab-rental-properties", {
+      .get("/properties/rental-properties", {
         params: {
           query: query,
           type: type,
@@ -32,7 +36,8 @@ export default function Props() {
       .then((response) => {
         console.log(response.data);
         setProperties(response.data);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [query, type, order, dayAgo]);
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -52,7 +57,7 @@ export default function Props() {
   };
   return (
     <div className="px-10">
-      <div>
+      <div className="">
         <h3>Filter</h3>
         <div className="flex flex-col md:flex-row w-full gap-12 align-start justify-start">
           <input
@@ -101,6 +106,12 @@ export default function Props() {
       </div>
       <p className="py-5 font-bold">All Condos available for rent</p>
 
+      {loading && (
+        <div className="mx-auto w-fit m-10">
+          <SpinneRed />
+        </div>
+      )}
+
       {properties.map((property) => {
         return (
           <div className="flex flex-row mb-8 shadow-xl" key={property["id"]}>
@@ -121,7 +132,9 @@ export default function Props() {
         );
       })}
 
-      <div className="flex flex-row">
+      {/* <div className="flex flex-row">
+
+      --test function
         <img
           src="https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"
           className="w-70 flex-1"
@@ -131,7 +144,7 @@ export default function Props() {
           <p>Price</p>
           <p>Test picture hello world!</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

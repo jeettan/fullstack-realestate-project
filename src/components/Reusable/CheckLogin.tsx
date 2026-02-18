@@ -8,7 +8,7 @@ function CheckLogin() {
   }
 
   axios
-    .post("/verify-token")
+    .post("/users/verify-token")
     .then(() => {
       return true;
     })

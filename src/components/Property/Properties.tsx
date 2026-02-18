@@ -199,7 +199,7 @@ export default function Properties() {
 
   useEffect(() => {
     axios
-      .post("/grab-rental-properties-with-property-id", {
+      .post("/properties/rental-properties-with-property-id", {
         id: id,
       })
       .then((response) => {
@@ -213,7 +213,7 @@ export default function Properties() {
   useEffect(() => {
     if (properties?.id) {
       axios
-        .get("/grab-rental-images", {
+        .get("/properties/rental-images", {
           params: {
             id: properties["folder_id"],
           },

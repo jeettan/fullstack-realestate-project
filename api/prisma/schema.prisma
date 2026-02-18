@@ -38,5 +38,5 @@ model users {
   password   String? @db.VarChar(100)
   first_name String? @db.VarChar(45)
   last_name  String? @db.VarChar(45)
-  email      String? @db.VarChar(45)
+  email      String? @unique @db.VarChar(45)
 }

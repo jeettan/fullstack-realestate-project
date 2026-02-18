@@ -5,15 +5,17 @@ interface RegisterDashboardProps {
     event: FormEvent<HTMLFormElement>,
     setRegisterSuccess: (msg: string) => void,
     seterrorMessageRegister: (msg: string) => void,
-    formRef: RefObject<HTMLFormElement | null>
+    formRef: RefObject<HTMLFormElement | null>,
   ) => void;
   setRegisterSuccess: (msg: string) => void;
   seterrorMessageRegister: (msg: string) => void;
   formRef: RefObject<HTMLFormElement | null>;
   errorMessageRegister: string;
   registerSuccess: string;
-  setMainTab: (value: boolean) => void;
-  mainTab: boolean;
+  setMainTab: React.Dispatch<React.SetStateAction<number>>;
+  mainTab: number;
+  Spinner: React.ComponentType;
+  isLoading: boolean;
 }
 
 const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
@@ -24,18 +26,20 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
   errorMessageRegister,
   registerSuccess,
   setMainTab,
-  mainTab,
+  Spinner,
+  isLoading,
 }) => {
+
   return (
     <form
-      className="flex flex-col justify-center items-center text-white shadow-lg p-9 mt-7"
+      className="flex flex-col justify-center items-center text-white shadow-lg p-9 mt-7 max-w-md w-[80%]"
       style={{ backgroundColor: "#573736" }}
       onSubmit={(e) =>
         RegisterFunction(
           e,
           setRegisterSuccess,
           seterrorMessageRegister,
-          formRef
+          formRef,
         )
       }
       ref={formRef}
@@ -49,7 +53,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
       <div className="flex flex-row items-center justify-center space-x-4 w-full">
         <input
           type="text"
-          className="bg-gray-100 m-3 py-2 px-5 text-black w-1/3"
+          className="bg-gray-100 m-3 py-2 px-5 text-black w-[40%]"
           placeholder="First Name"
           minLength={3}
           name="first_name"
@@ -59,7 +63,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
 
         <input
           type="text"
-          className="bg-gray-100 m-3 py-2 px-5 text-black w-1/3"
+          className="bg-gray-100 m-3 py-2 px-5 text-black w-[40%]"
           placeholder="Last Name"
           minLength={3}
           name="last_name"
@@ -70,7 +74,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
 
       <input
         type="text"
-        className="bg-gray-100 m-3 py-2 px-5 text-black w-87"
+        className="bg-gray-100 m-3 py-2 px-5 text-black w-[90%] md:w-87"
         placeholder="Email Address"
         name="email"
         minLength={7}
@@ -79,7 +83,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
 
       <input
         type="text"
-        className="bg-gray-100 m-3 py-2 px-5 text-black w-87"
+        className="bg-gray-100 m-3 py-2 px-5 text-black w-[90%] md:w-87"
         placeholder="Username"
         minLength={4}
         name="username"
@@ -88,7 +92,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
 
       <input
         type="password"
-        className="bg-gray-100 m-3 py-2 px-5 text-black w-87"
+        className="bg-gray-100 m-3 py-2 px-5 text-black w-[90%] md:w-87"
         placeholder="Password"
         minLength={6}
         name="password"
@@ -97,7 +101,7 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
 
       <input
         type="password"
-        className="bg-gray-100 m-3 py-2 px-5 text-black w-87"
+        className="bg-gray-100 m-3 py-2 px-5 text-black w-[90%] md:w-87"
         placeholder="Confirm Password"
         minLength={6}
         name="passwordagain"
@@ -107,12 +111,15 @@ const RegisterDashboard: React.FC<RegisterDashboardProps> = ({
       <p className="text-red-600">{errorMessageRegister}</p>
       <p className="text-green-400">{registerSuccess}</p>
 
-      <button className="mt-5 w-[70%] bg-gradient-to-t from-red-900 to-red-800 text-white py-3 font-semibold shadow-md !rounded-none">
-        Register
+      <button
+        className="mt-5 w-[70%] bg-gradient-to-t from-red-900 to-red-800 text-white py-3 font-semibold shadow-md !rounded-none flex justify-center"
+        disabled={isLoading}
+      >
+        {isLoading ? <Spinner /> : "Register"}
       </button>
       <p
         className="mt-5 hover:underline cursor-pointer"
-        onClick={() => setMainTab(!mainTab)}
+        onClick={() => setMainTab(1)}
       >
         Go back
       </p>

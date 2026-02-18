@@ -9,17 +9,20 @@ import { useRef } from "react";
 import type { RefObject } from "react";
 import LoginDashboard from "./LoginDashboard";
 import RegisterDashboard from "./RegisterDashboard";
+import ForgetPassword from "./ForgetPassword";
+import Spinner from "../Reusable/Spinner";
 
 export default function Login() {
   const formRef = useRef<HTMLFormElement>(null);
   const loginRef = useRef<HTMLFormElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
       axios
-        .post("/verify-token", {
+        .post("/users/verify-token", {
           token: token,
         })
         .then(() => {
@@ -32,9 +35,8 @@ export default function Login() {
     }
   }, []);
 
-  const [mainTab, setMainTab] = useState(true);
+  const [mainTab, setMainTab] = useState<number>(1);
   const navigate = useNavigate();
-
   const [errorMessageRegister, seterrorMessageRegister] = useState("");
   const [errorLogin, setErrorLogin] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
@@ -43,9 +45,10 @@ export default function Login() {
     event: React.FormEvent<HTMLFormElement>,
     loginRef: RefObject<HTMLFormElement | null>,
     setErrorLogin: (msg: string) => void,
-    navigate: (path: string) => void
+    navigate: (path: string) => void,
   ) {
     event.preventDefault();
+    setIsLoading(true);
 
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
@@ -56,79 +59,81 @@ export default function Login() {
     loginRef.current?.reset();
 
     axios
-      .post("/login", {
+      .post("/users/login", {
         username: username,
         password: password,
       })
       .then((response) => {
         setErrorLogin("");
         localStorage.setItem("token", response.data.token);
+        setIsLoading(false);
         navigate("/");
       })
       .catch((error) => {
         setErrorLogin(error.response.data);
+        setIsLoading(false);
         console.log(error);
       });
   }
 
-  function RegisterFunction(
+  async function RegisterFunction(
     event: React.FormEvent<HTMLFormElement>,
     setRegisterSuccess: (msg: string) => void,
     seterrorMessageRegister: (msg: string) => void,
-    formRef: RefObject<HTMLFormElement | null>
+    formRef: RefObject<HTMLFormElement | null>,
   ) {
     event.preventDefault();
+    setIsLoading(true);
 
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
+    try {
+      const form = event.target as HTMLFormElement;
+      const formData = new FormData(form);
 
-    let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const emailValue = formData.get("email");
 
-    const emailValue = formData.get("email");
+      if (typeof emailValue !== "string" || !regex.test(emailValue)) {
+        throw new Error("Invalid email format");
+      }
 
-    if (typeof emailValue !== "string" || !regex.test(emailValue)) {
-      setRegisterSuccess("");
-      seterrorMessageRegister("Invalid email format");
-      return;
-    }
+      if (formData.get("password") !== formData.get("passwordagain")) {
+        throw new Error("Password does not match, try again");
+      }
 
-    if (formData.get("password") !== formData.get("passwordagain")) {
-      setRegisterSuccess("");
-      seterrorMessageRegister("Password does not match, try again");
-      return;
-    }
-
-    axios
-      .post("/register", {
+      await axios.post("/users/register", {
         username: formData.get("username"),
         password: formData.get("password"),
         first_name: formData.get("first_name"),
         last_name: formData.get("last_name"),
         passwordagain: formData.get("passwordagain"),
         email: formData.get("email"),
-      })
-      .then((response) => {
-        formRef.current?.reset();
-        setRegisterSuccess(
-          "Successfully registered user: " + formData.get("username")
-        );
-        seterrorMessageRegister("");
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-        if (error.status == 401) {
-          setRegisterSuccess("");
-          seterrorMessageRegister(error.response.data.message);
-        }
       });
+
+      setRegisterSuccess(
+        "Successfully registered user: " + formData.get("username"),
+      );
+      seterrorMessageRegister("");
+    } catch (error: any) {
+      if (error.name) {
+        setRegisterSuccess("");
+        seterrorMessageRegister(error.message);
+      }
+      console.log(error);
+      if (error.status == 401) {
+        setRegisterSuccess("");
+        seterrorMessageRegister(error.response.data.message);
+      }
+    } finally {
+      formRef.current?.reset();
+      setIsLoading(false);
+    }
   }
 
   return (
     <div className="main">
       <Nav />
       <div
-        className="h-[100vh] flex flex-col items-center justify-start"
+        className="h-[100vh] flex flex-col items-center justify-center md:justify-start"
         style={{
           backgroundImage: `url(${BgLogin})`,
           backgroundSize: "cover",
@@ -136,7 +141,7 @@ export default function Login() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {mainTab ? (
+        {mainTab == 1 ? (
           <LoginDashboard
             LoginFunction={LoginFunction}
             errorLogin={errorLogin}
@@ -145,8 +150,13 @@ export default function Login() {
             loginRef={loginRef}
             setErrorLogin={setErrorLogin}
             navigate={navigate}
+            Spinner={Spinner}
+            isLoading={isLoading}
           />
         ) : (
+          ""
+        )}
+        {mainTab == 2 ? (
           <RegisterDashboard
             RegisterFunction={RegisterFunction}
             setRegisterSuccess={setRegisterSuccess}
@@ -156,7 +166,22 @@ export default function Login() {
             registerSuccess={registerSuccess}
             setMainTab={setMainTab}
             mainTab={mainTab}
+            isLoading={isLoading}
+            Spinner={Spinner}
           />
+        ) : (
+          ""
+        )}
+
+        {mainTab == 3 ? (
+          <ForgetPassword
+            setMainTab={setMainTab}
+            isLoading={isLoading}
+            Spinner={Spinner}
+            setIsLoading={setIsLoading}
+          />
+        ) : (
+          ""
         )}
       </div>
     </div>
