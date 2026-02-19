@@ -37,7 +37,7 @@ const verifyEmailToken = async function (req, res, next) {
             return res.status(401).json({ message: "Invalid token format" });
         }
 
-        const decoded = await jwt.verify(token, 'mygoodness');
+        const decoded = await jwt.verify(token, process.env.EMAIL_RESET_SECRET);
 
         req.user = decoded;
 

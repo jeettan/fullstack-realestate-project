@@ -200,12 +200,12 @@ router.post('/forget-password', async (req, res) => {
         port: 587,
         secure: false,
         auth: {
-            user: `${process.env.EMAIL_USER}`,
-            pass: `${process.env.EMAIL_PASS}`,
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
         },
     });
 
-    const token = jwt.sign({ email: req.body.email }, 'mygoodness', { expiresIn: '15m' });
+    const token = jwt.sign({ email: req.body.email }, process.env.EMAIL_RESET_SECRET, { expiresIn: '15m' });
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
